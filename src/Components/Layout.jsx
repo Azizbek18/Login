@@ -1,13 +1,19 @@
 import React from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 
-function Layout({ children }) {
+
+function Layout() {
+  const navigate = useNavigate();
+  const logOut = ()=>{
+    localStorage.removeItem("token");
+    navigate("/login")
+  }
   return (
     <div className="grid grid-cols-[220px_1fr] min-h-screen bg-gray-100">
       <aside className="bg-[#1b2533] text-white p-5 flex flex-col gap-4 text-center">
-        <div className="mb-6 text-center">
+        <div className="mb-6 text-center flex justify-center items-center">
           <NavLink to='/'>
-                <img src="./Logo.png" alt="sayt logosi" />
+                <img className='w-[120px] h-[100px]' src="./Logo.png" alt="sayt logosi" />
           </NavLink>
         </div>
         <NavLink
@@ -64,7 +70,7 @@ function Layout({ children }) {
 
       <div className="flex flex-col">
         <header className="flex justify-end items-center bg-white p-4 shadow">
-          <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+          <button onClick={logOut} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
             Log Out
           </button>
         </header>

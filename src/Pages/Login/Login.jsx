@@ -1,23 +1,35 @@
 
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 function Login() {
   const {register, handleSubmit,reset}=useForm()
   const navigate = useNavigate();
-
+  const [loading,setLoading]= useState(false);
   const Login = async (data) =>{
+    setLoading(true)
       try{
         const res = await axios.post("https://testaoron.limsa.uz/api/auth/login",data);
-        console.log(res.data);
-        if (res?.data) {
-          localStorage.setItem('token', res.data.token);
+        const token = res?.data?.data?.access_token;
+    const success = res?.data?.success;
+
+    console.log("Token:", token);
+    console.log("Success:", success);
+        
+        if (res?.data?.success) {
+          localStorage.setItem("token",res?.data?.data?.access_token);
+          reset();
           navigate('/');
         }
-        reset();
+        else{
+          alert(res?.data?.message || "Login yoki parolda xatolik");
+        }
       } catch (error) {
-        console.log('Xatolik:', error);
-        console.log('Server javobi:', error.response?.data);
+        alert(res?.data?.message || "Login yoki parolda xatolik");
+        console.log(error);
+      } finally{
+        setLoading(false)
       }
   }
   return (
@@ -49,10 +61,11 @@ function Login() {
           </div>
           <button
             onClick={handleSubmit(Login)}
+            disabled={loading}
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
           >
-            Log In
+            {loading?'Yuborilmoqda...':'Yuborish'}
           </button>
         </form>
       </div>
